@@ -25,7 +25,10 @@ bookingForm.addEventListener('submit', (event) => {
     `Message: ${details.get('message') || 'No extra details provided.'}`
   ].join('\n');
 
+  const mailtoUrl = `mailto:shanegibson432@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=shanegibson432@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  window.open(gmailUrl, '_blank', 'noopener');
-  document.querySelector('#form-note').textContent = 'Gmail should open in a new tab with the booking request ready to send.';
+  const fallbackTimer = window.setTimeout(() => window.open(gmailUrl, '_blank', 'noopener'), 900);
+  window.location.href = mailtoUrl;
+  document.querySelector('#form-note').textContent = 'Opening your email app. Gmail will open in a new tab if no app is connected.';
+  window.addEventListener('pagehide', () => window.clearTimeout(fallbackTimer), { once: true });
 });
