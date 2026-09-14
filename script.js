@@ -43,10 +43,11 @@ const prizeWheel = document.querySelector('#prize-wheel');
 const wheelButton = document.querySelector('#wheel-button');
 const wheelMessage = document.querySelector('#wheel-message');
 const wheelResult = document.querySelector('#wheel-result');
-const cooldownKey = 'grasslab-slot-last-spin';
+const cooldownKey = 'grasslab-slot-last-spin:';
 const cooldownLength = 24 * 60 * 60 * 1000;
 const reelValues = [5, 7, 9];
 const testWinMode = new URLSearchParams(window.location.search).get('test-win') === '1';
+const emailField = wheelForm.querySelector('input[name="email"]');
 const wheelHeading = document.querySelector('.wheel-section h2');
 const wheelIntro = document.querySelector('.wheel-layout > div > p');
 wheelHeading.innerHTML = 'Try the<br><em>7s slot.</em>';
@@ -111,6 +112,8 @@ const formatCountdown = (remaining) => {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
+const getCooldownKey = () => `${cooldownKey}${emailField.value.trim().toLowerCase()}`;
+
 const updateCooldown = () => {
   if (testWinMode) {
     wheelButton.disabled = false;
@@ -118,7 +121,14 @@ const updateCooldown = () => {
     wheelMessage.textContent = 'Test mode: every spin wins 777.';
     return false;
   }
-  const lastSpin = Number(localStorage.getItem(cooldownKey));
+  const email = emailField.value.trim();
+  if (!email) {
+    wheelButton.disabled = true;
+    slotLever.disabled = true;
+    wheelMessage.textContent = 'Enter your email to check spin availability.';
+    return true;
+  }
+  const lastSpin = Number(localStorage.getItem(getCooldownKey()));
   const remaining = cooldownLength - (Date.now() - lastSpin);
   if (lastSpin && remaining > 0) {
     wheelButton.disabled = true;
@@ -134,6 +144,7 @@ const updateCooldown = () => {
 
 updateCooldown();
 window.setInterval(updateCooldown, 1000);
+emailField.addEventListener('input', updateCooldown);
 
 wheelForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -141,7 +152,7 @@ wheelForm.addEventListener('submit', (event) => {
 
   wheelButton.disabled = true;
   slotLever.disabled = true;
-  localStorage.setItem(cooldownKey, Date.now().toString());
+  localStorage.setItem(getCooldownKey(), Date.now().toString());
   wheelMessage.textContent = 'Spinning... good luck.';
   const won = testWinMode || Math.floor(Math.random() * 1000) === 0;
   const results = won ? [7, 7, 7] : Array.from({ length: 3 }, () => reelValues[Math.floor(Math.random() * reelValues.length)]);
