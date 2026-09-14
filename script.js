@@ -51,7 +51,8 @@ const wheelHeading = document.querySelector('.wheel-section h2');
 const wheelIntro = document.querySelector('.wheel-layout > div > p');
 wheelHeading.innerHTML = 'Try the<br><em>7s slot.</em>';
 wheelIntro.textContent = 'Match three 7s for a free grass cut. You get one spin every 24 hours.';
-prizeWheel.innerHTML = '<div class="slot-reel" data-reel="0">5</div><div class="slot-reel" data-reel="1">7</div><div class="slot-reel" data-reel="2">9</div>';
+prizeWheel.innerHTML = '<div class="slot-window"><div class="slot-reel" data-reel="0">5</div><div class="slot-reel" data-reel="1">7</div><div class="slot-reel" data-reel="2">9</div></div><button class="slot-lever" id="slot-lever" type="button" aria-label="Pull lever to spin"><span class="lever-rod"></span><span class="lever-ball"></span></button>';
+const slotLever = document.querySelector('#slot-lever');
 
 const winnerPopup = document.createElement('div');
 winnerPopup.className = 'winner-popup';
@@ -97,6 +98,7 @@ const formatCountdown = (remaining) => {
 const updateCooldown = () => {
   if (testWinMode) {
     wheelButton.disabled = false;
+    slotLever.disabled = false;
     wheelMessage.textContent = 'Test mode: every spin wins 777.';
     return false;
   }
@@ -104,10 +106,12 @@ const updateCooldown = () => {
   const remaining = cooldownLength - (Date.now() - lastSpin);
   if (lastSpin && remaining > 0) {
     wheelButton.disabled = true;
+    slotLever.disabled = true;
     wheelMessage.textContent = `Next spin available in ${formatCountdown(remaining)}`;
     return true;
   }
   wheelButton.disabled = false;
+  slotLever.disabled = false;
   wheelMessage.textContent = 'Your details are required to play.';
   return false;
 };
@@ -120,6 +124,7 @@ wheelForm.addEventListener('submit', (event) => {
   if (wheelButton.disabled) return;
 
   wheelButton.disabled = true;
+  slotLever.disabled = true;
   localStorage.setItem(cooldownKey, Date.now().toString());
   wheelMessage.textContent = 'Spinning... good luck.';
   const won = testWinMode || Math.floor(Math.random() * 1000) === 0;
@@ -145,6 +150,10 @@ wheelForm.addEventListener('submit', (event) => {
 
     wheelMessage.textContent = `Result: ${results.join(' ')}. Next spin available in 24:00:00.`;
   }, 2200);
+});
+
+slotLever.addEventListener('click', () => {
+  if (!wheelButton.disabled) wheelForm.requestSubmit();
 });
 
 const comparisonSlider = document.querySelector('#comparison-slider');
