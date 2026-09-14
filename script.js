@@ -53,6 +53,17 @@ wheelHeading.innerHTML = 'Try the<br><em>7s slot.</em>';
 wheelIntro.textContent = 'Match three 7s for a free grass cut. You get one spin every 24 hours.';
 prizeWheel.innerHTML = '<div class="slot-window"><div class="slot-reel" data-reel="0">5</div><div class="slot-reel" data-reel="1">7</div><div class="slot-reel" data-reel="2">9</div></div><button class="slot-lever" id="slot-lever" type="button" aria-label="Pull lever to spin"><span class="lever-rod"></span><span class="lever-ball"></span></button>';
 const slotLever = document.querySelector('#slot-lever');
+const slotWindow = prizeWheel.querySelector('.slot-window');
+const slotReels = prizeWheel.querySelectorAll('.slot-reel');
+const setImportantStyles = (element, styles) => {
+  Object.entries(styles).forEach(([property, value]) => element.style.setProperty(property, value, 'important'));
+};
+setImportantStyles(prizeWheel, { width: '360px', height: '145px', display: 'block', padding: '12px', transform: 'none' });
+setImportantStyles(slotWindow, { height: '100%', display: 'flex', flexDirection: 'row', gap: '10px' });
+slotReels.forEach((reel) => setImportantStyles(reel, { width: 'auto', height: '100%', flex: '1', display: 'grid', fontSize: '54px' }));
+setImportantStyles(slotLever, { display: 'block', position: 'relative', width: '84px', height: '220px' });
+setImportantStyles(slotLever.querySelector('.lever-rod'), { position: 'absolute', right: '34px', top: '28px', width: '12px', height: '158px' });
+setImportantStyles(slotLever.querySelector('.lever-ball'), { position: 'absolute', right: '8px', top: '0', width: '58px', height: '58px' });
 
 const winnerPopup = document.createElement('div');
 winnerPopup.className = 'winner-popup';
