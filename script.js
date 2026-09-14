@@ -1,5 +1,11 @@
 const revealItems = document.querySelectorAll('.reveal');
 
+const serviceSelect = document.querySelector('select[name="service"]');
+const stoneOption = document.createElement('option');
+stoneOption.value = 'Stone laying';
+stoneOption.textContent = 'Stone laying';
+serviceSelect.append(stoneOption);
+
 const revealObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
