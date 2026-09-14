@@ -25,6 +25,7 @@ bookingForm.addEventListener('submit', (event) => {
     `Message: ${details.get('message') || 'No extra details provided.'}`
   ].join('\n');
 
-  window.location.href = `mailto:shanegibson432@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  document.querySelector('#form-note').textContent = 'Your email app should open with the booking request ready to send.';
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=shanegibson432@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.open(gmailUrl, '_blank', 'noopener');
+  document.querySelector('#form-note').textContent = 'Gmail should open in a new tab with the booking request ready to send.';
 });
