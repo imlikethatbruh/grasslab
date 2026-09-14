@@ -46,6 +46,7 @@ const wheelResult = document.querySelector('#wheel-result');
 const cooldownKey = 'grasslab-slot-last-spin';
 const cooldownLength = 24 * 60 * 60 * 1000;
 const reelValues = [5, 7, 9];
+const testWinMode = new URLSearchParams(window.location.search).get('test-win') === '1';
 const wheelHeading = document.querySelector('.wheel-section h2');
 const wheelIntro = document.querySelector('.wheel-layout > div > p');
 wheelHeading.innerHTML = 'Try the<br><em>7s slot.</em>';
@@ -94,6 +95,11 @@ const formatCountdown = (remaining) => {
 };
 
 const updateCooldown = () => {
+  if (testWinMode) {
+    wheelButton.disabled = false;
+    wheelMessage.textContent = 'Test mode: every spin wins 777.';
+    return false;
+  }
   const lastSpin = Number(localStorage.getItem(cooldownKey));
   const remaining = cooldownLength - (Date.now() - lastSpin);
   if (lastSpin && remaining > 0) {
@@ -116,7 +122,7 @@ wheelForm.addEventListener('submit', (event) => {
   wheelButton.disabled = true;
   localStorage.setItem(cooldownKey, Date.now().toString());
   wheelMessage.textContent = 'Spinning... good luck.';
-  const won = Math.floor(Math.random() * 1000) === 0;
+  const won = testWinMode || Math.floor(Math.random() * 1000) === 0;
   const results = won ? [7, 7, 7] : Array.from({ length: 3 }, () => reelValues[Math.floor(Math.random() * reelValues.length)]);
   if (!won && results.every((value) => value === 7)) results[2] = 5;
   prizeWheel.classList.remove('spinning');
@@ -133,7 +139,7 @@ wheelForm.addEventListener('submit', (event) => {
       wheelMessage.classList.add('winner');
       playBellSound();
       winnerPopup.classList.add('show');
-      HTMLFormElement.prototype.submit.call(wheelForm);
+      if (!testWinMode) HTMLFormElement.prototype.submit.call(wheelForm);
       return;
     }
 
