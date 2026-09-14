@@ -43,31 +43,72 @@ const prizeWheel = document.querySelector('#prize-wheel');
 const wheelButton = document.querySelector('#wheel-button');
 const wheelMessage = document.querySelector('#wheel-message');
 const wheelResult = document.querySelector('#wheel-result');
+const cooldownKey = 'grasslab-slot-last-spin';
+const cooldownLength = 24 * 60 * 60 * 1000;
+const reelValues = [5, 7, 9];
+const wheelHeading = document.querySelector('.wheel-section h2');
+const wheelIntro = document.querySelector('.wheel-layout > div > p');
+wheelHeading.innerHTML = 'Try the<br><em>7s slot.</em>';
+wheelIntro.textContent = 'Match three 7s for a free grass cut. You get one spin every 24 hours.';
+prizeWheel.innerHTML = '<div class="slot-reel" data-reel="0">5</div><div class="slot-reel" data-reel="1">7</div><div class="slot-reel" data-reel="2">9</div>';
+
+const winnerPopup = document.createElement('div');
+winnerPopup.className = 'winner-popup';
+winnerPopup.innerHTML = '<div class="winner-card"><span class="winner-kicker">GrassLab jackpot</span><strong>7 7 7</strong><h3>You won a free grass cut!</h3><p>Your details have been sent to GrassLab. We will be in touch to arrange your cut.</p><button type="button" class="button button-primary winner-close">Thank you <span>✓</span></button></div>';
+document.body.append(winnerPopup);
+winnerPopup.querySelector('.winner-close').addEventListener('click', () => winnerPopup.classList.remove('show'));
+
+const formatCountdown = (remaining) => {
+  const hours = Math.floor(remaining / 3600000);
+  const minutes = Math.floor((remaining % 3600000) / 60000);
+  const seconds = Math.floor((remaining % 60000) / 1000);
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+};
+
+const updateCooldown = () => {
+  const lastSpin = Number(localStorage.getItem(cooldownKey));
+  const remaining = cooldownLength - (Date.now() - lastSpin);
+  if (lastSpin && remaining > 0) {
+    wheelButton.disabled = true;
+    wheelMessage.textContent = `Next spin available in ${formatCountdown(remaining)}`;
+    return true;
+  }
+  wheelButton.disabled = false;
+  wheelMessage.textContent = 'Your details are required to play.';
+  return false;
+};
+
+updateCooldown();
+window.setInterval(updateCooldown, 1000);
 
 wheelForm.addEventListener('submit', (event) => {
   event.preventDefault();
   if (wheelButton.disabled) return;
 
   wheelButton.disabled = true;
+  localStorage.setItem(cooldownKey, Date.now().toString());
   wheelMessage.textContent = 'Spinning... good luck.';
   const won = Math.floor(Math.random() * 1000) === 0;
-  const rotation = 1440 + Math.floor(Math.random() * 360);
-  prizeWheel.style.setProperty('--wheel-rotation', `${rotation}deg`);
+  const results = won ? [7, 7, 7] : Array.from({ length: 3 }, () => reelValues[Math.floor(Math.random() * reelValues.length)]);
+  if (!won && results.every((value) => value === 7)) results[2] = 5;
   prizeWheel.classList.remove('spinning');
   void prizeWheel.offsetWidth;
   prizeWheel.classList.add('spinning');
 
   window.setTimeout(() => {
+    prizeWheel.querySelectorAll('.slot-reel').forEach((reel, index) => {
+      reel.textContent = results[index];
+    });
     if (won) {
       wheelResult.value = 'WINNER - free grass cut';
-      wheelMessage.textContent = 'You won a free grass cut! Your details have been sent to GrassLab.';
+      wheelMessage.textContent = '777! You won a free grass cut.';
       wheelMessage.classList.add('winner');
+      winnerPopup.classList.add('show');
       HTMLFormElement.prototype.submit.call(wheelForm);
       return;
     }
 
-    wheelMessage.textContent = 'Not this time. You can try again.';
-    wheelButton.disabled = false;
+    wheelMessage.textContent = `Result: ${results.join(' ')}. Next spin available in 24:00:00.`;
   }, 2200);
 });
 
