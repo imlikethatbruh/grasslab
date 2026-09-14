@@ -38,6 +38,39 @@ const statObserver = new IntersectionObserver((entries, observer) => {
 
 statNumbers.forEach((number) => statObserver.observe(number));
 
+const wheelForm = document.querySelector('#wheel-form');
+const prizeWheel = document.querySelector('#prize-wheel');
+const wheelButton = document.querySelector('#wheel-button');
+const wheelMessage = document.querySelector('#wheel-message');
+const wheelResult = document.querySelector('#wheel-result');
+
+wheelForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  if (wheelButton.disabled) return;
+
+  wheelButton.disabled = true;
+  wheelMessage.textContent = 'Spinning... good luck.';
+  const won = Math.floor(Math.random() * 1000) === 0;
+  const rotation = 1440 + Math.floor(Math.random() * 360);
+  prizeWheel.style.setProperty('--wheel-rotation', `${rotation}deg`);
+  prizeWheel.classList.remove('spinning');
+  void prizeWheel.offsetWidth;
+  prizeWheel.classList.add('spinning');
+
+  window.setTimeout(() => {
+    if (won) {
+      wheelResult.value = 'WINNER - free grass cut';
+      wheelMessage.textContent = 'You won a free grass cut! Your details have been sent to GrassLab.';
+      wheelMessage.classList.add('winner');
+      HTMLFormElement.prototype.submit.call(wheelForm);
+      return;
+    }
+
+    wheelMessage.textContent = 'Not this time. You can try again.';
+    wheelButton.disabled = false;
+  }, 2200);
+});
+
 const comparisonSlider = document.querySelector('#comparison-slider');
 const comparisonRange = document.querySelector('#comparison-range');
 const beforeImageWrap = comparisonSlider.querySelector('.before-image-wrap');
