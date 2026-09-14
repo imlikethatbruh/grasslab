@@ -91,10 +91,12 @@ stars.forEach((star) => {
     ratingLabel.textContent = `${selectedRating} out of 5`;
     stars.forEach((item) => item.classList.toggle('active', Number(item.dataset.rating) <= selectedRating));
     playRatingSound(selectedRating);
+    const celebration = document.querySelector('.rating-celebration');
+    celebration.classList.toggle('show', selectedRating === 5);
     if (selectedRating === 5) {
-      document.body.classList.remove('five-star-shake');
-      void document.body.offsetWidth;
-      document.body.classList.add('five-star-shake');
+      celebration.classList.remove('replay');
+      void celebration.offsetWidth;
+      celebration.classList.add('replay');
     }
   });
 });
