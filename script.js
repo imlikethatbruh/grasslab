@@ -59,6 +59,25 @@ updateComparison(comparisonRange.value);
 const stars = document.querySelectorAll('.star');
 const ratingValue = document.querySelector('#rating-value');
 const ratingLabel = document.querySelector('#rating-label');
+let ratingAudioContext;
+
+const playRatingSound = (rating) => {
+  ratingAudioContext ||= new AudioContext();
+  const oscillator = ratingAudioContext.createOscillator();
+  const gain = ratingAudioContext.createGain();
+  const now = ratingAudioContext.currentTime;
+  const pitch = 360 + (rating * 110);
+
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(pitch, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.12, now + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+  oscillator.connect(gain);
+  gain.connect(ratingAudioContext.destination);
+  oscillator.start(now);
+  oscillator.stop(now + 0.3);
+};
 
 stars.forEach((star) => {
   star.addEventListener('mouseenter', () => {
@@ -71,6 +90,7 @@ stars.forEach((star) => {
     ratingValue.value = selectedRating;
     ratingLabel.textContent = `${selectedRating} out of 5`;
     stars.forEach((item) => item.classList.toggle('active', Number(item.dataset.rating) <= selectedRating));
+    playRatingSound(selectedRating);
   });
 });
 
