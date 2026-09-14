@@ -9,3 +9,16 @@ const revealObserver = new IntersectionObserver((entries, observer) => {
 }, { threshold: 0.14 });
 
 revealItems.forEach((item) => revealObserver.observe(item));
+
+const stars = document.querySelectorAll('.star');
+const ratingValue = document.querySelector('#rating-value');
+const ratingLabel = document.querySelector('#rating-label');
+
+stars.forEach((star) => {
+  star.addEventListener('click', () => {
+    const selectedRating = Number(star.dataset.rating);
+    ratingValue.value = selectedRating;
+    ratingLabel.textContent = `${selectedRating} out of 5`;
+    stars.forEach((item) => item.classList.toggle('active', Number(item.dataset.rating) <= selectedRating));
+  });
+});
