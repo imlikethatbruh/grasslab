@@ -54,9 +54,37 @@ prizeWheel.innerHTML = '<div class="slot-reel" data-reel="0">5</div><div class="
 
 const winnerPopup = document.createElement('div');
 winnerPopup.className = 'winner-popup';
-winnerPopup.innerHTML = '<div class="winner-card"><span class="winner-kicker">GrassLab jackpot</span><strong>7 7 7</strong><h3>You won a free grass cut!</h3><p>Your details have been sent to GrassLab. We will be in touch to arrange your cut.</p><button type="button" class="button button-primary winner-close">Thank you <span>✓</span></button></div>';
+        winnerPopup.innerHTML = '<div class="winner-card"><span class="winner-kicker">GrassLab jackpot</span><strong>7 7 7</strong><h3>CONGRATULATIONS!</h3><p>You won a free grass cut! Your details have been sent to GrassLab.</p><button type="button" class="button button-primary winner-close">Thank you <span>✓</span></button></div><div class="confetti" aria-hidden="true"></div>';
 document.body.append(winnerPopup);
 winnerPopup.querySelector('.winner-close').addEventListener('click', () => winnerPopup.classList.remove('show'));
+
+const playBellSound = () => {
+  const bellContext = new AudioContext();
+  [880, 1320, 1760].forEach((frequency, index) => {
+    const oscillator = bellContext.createOscillator();
+    const gain = bellContext.createGain();
+    const start = bellContext.currentTime + (index * 0.08);
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + 1.1);
+    oscillator.connect(gain);
+    gain.connect(bellContext.destination);
+    oscillator.start(start);
+    oscillator.stop(start + 1.15);
+  });
+};
+
+const confetti = winnerPopup.querySelector('.confetti');
+for (let index = 0; index < 36; index += 1) {
+  const piece = document.createElement('i');
+  piece.style.setProperty('--x', `${Math.random() * 100}%`);
+  piece.style.setProperty('--delay', `${Math.random() * 0.45}s`);
+  piece.style.setProperty('--drift', `${(Math.random() - 0.5) * 180}px`);
+  piece.style.setProperty('--spin', `${Math.random() * 720 - 360}deg`);
+  confetti.append(piece);
+}
 
 const formatCountdown = (remaining) => {
   const hours = Math.floor(remaining / 3600000);
@@ -103,6 +131,7 @@ wheelForm.addEventListener('submit', (event) => {
       wheelResult.value = 'WINNER - free grass cut';
       wheelMessage.textContent = '777! You won a free grass cut.';
       wheelMessage.classList.add('winner');
+      playBellSound();
       winnerPopup.classList.add('show');
       HTMLFormElement.prototype.submit.call(wheelForm);
       return;
