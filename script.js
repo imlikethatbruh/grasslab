@@ -32,6 +32,30 @@ const statObserver = new IntersectionObserver((entries, observer) => {
 
 statNumbers.forEach((number) => statObserver.observe(number));
 
+const comparisonSlider = document.querySelector('#comparison-slider');
+const comparisonRange = document.querySelector('#comparison-range');
+const beforeImageWrap = comparisonSlider.querySelector('.before-image-wrap');
+const beforeImage = beforeImageWrap.querySelector('.comparison-image');
+const comparisonHandle = comparisonSlider.querySelector('.comparison-handle');
+
+const updateComparison = (value) => {
+  beforeImage.style.width = `${comparisonSlider.clientWidth}px`;
+  beforeImageWrap.style.width = `${value}%`;
+  comparisonHandle.style.left = `${value}%`;
+};
+
+comparisonRange.addEventListener('input', (event) => updateComparison(event.target.value));
+comparisonSlider.addEventListener('click', (event) => {
+  if (event.target === comparisonRange) return;
+  const bounds = comparisonSlider.getBoundingClientRect();
+  const value = ((event.clientX - bounds.left) / bounds.width) * 100;
+  comparisonRange.value = Math.max(0, Math.min(100, value));
+  updateComparison(comparisonRange.value);
+});
+
+window.addEventListener('resize', () => updateComparison(comparisonRange.value));
+updateComparison(comparisonRange.value);
+
 const stars = document.querySelectorAll('.star');
 const ratingValue = document.querySelector('#rating-value');
 const ratingLabel = document.querySelector('#rating-label');
