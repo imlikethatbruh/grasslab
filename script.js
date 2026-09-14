@@ -53,6 +53,11 @@ wheelHeading.innerHTML = 'Try the<br><em>7s slot.</em>';
 wheelIntro.textContent = 'Match three 7s for a free grass cut. You get one spin every 24 hours.';
 prizeWheel.innerHTML = '<div class="slot-window"><div class="slot-reel" data-reel="0">5</div><div class="slot-reel" data-reel="1">7</div><div class="slot-reel" data-reel="2">9</div></div><button class="slot-lever" id="slot-lever" type="button" aria-label="Pull lever to spin"><span class="lever-rod"></span><span class="lever-ball"></span></button>';
 const slotLever = document.querySelector('#slot-lever');
+const wheelStage = prizeWheel.closest('.wheel-stage');
+const spinButtonRow = document.createElement('div');
+spinButtonRow.className = 'spin-button-row';
+wheelStage.after(spinButtonRow);
+spinButtonRow.append(wheelButton);
 const slotWindow = prizeWheel.querySelector('.slot-window');
 const slotReels = prizeWheel.querySelectorAll('.slot-reel');
 const setImportantStyles = (element, styles) => {
