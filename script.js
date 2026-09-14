@@ -65,6 +65,11 @@ updateComparison(comparisonRange.value);
 const stars = document.querySelectorAll('.star');
 const ratingValue = document.querySelector('#rating-value');
 const ratingLabel = document.querySelector('#rating-label');
+const oneStarReaction = document.createElement('div');
+oneStarReaction.className = 'one-star-reaction';
+oneStarReaction.textContent = '🖕';
+oneStarReaction.setAttribute('aria-label', 'One star reaction');
+ratingLabel.after(oneStarReaction);
 let ratingAudioContext;
 
 const playRatingSound = (rating) => {
@@ -99,6 +104,7 @@ stars.forEach((star) => {
     playRatingSound(selectedRating);
     const celebration = document.querySelector('.rating-celebration');
     celebration.classList.toggle('show', selectedRating === 5);
+    oneStarReaction.classList.toggle('show', selectedRating === 1);
     if (selectedRating === 5) {
       celebration.classList.remove('replay');
       void celebration.offsetWidth;
