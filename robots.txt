@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://imlikethatbruh.github.io/grasslab/sitemap.xml
