@@ -1,3 +1,4 @@
+:root{--ink:#20201d;--paper:#f3eee6;--warm:#d7b99e;--rose:#b56d62;--muted:#77716a;--line:rgba(32,32,29,.18);--serif:'DM Serif Display',Georgia,serif;--sans:'Manrope',Arial,sans-serif;--mono:'DM Mono',monospace}.brand small{font:9px var(--mono);letter-spacing:.08em;color:var(--rose);margin-left:2px}
 :root{--ink:#20201d;--paper:#f3eee6;--warm:#d7b99e;--rose:#b56d62;--muted:#77716a;--line:rgba(32,32,29,.18);--serif:'DM Serif Display',Georgia,serif;--sans:'Manrope',Arial,sans-serif;--mono:'DM Mono',monospace}*{box-sizing:border-box}
 @keyframes reveal {
 	from {
