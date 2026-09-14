@@ -10,6 +10,28 @@ const revealObserver = new IntersectionObserver((entries, observer) => {
 
 revealItems.forEach((item) => revealObserver.observe(item));
 
+const statNumbers = document.querySelectorAll('.stat-number');
+const statObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const number = entry.target;
+    const target = Number(number.dataset.target);
+    const startTime = performance.now();
+    const duration = 900;
+
+    const count = (currentTime) => {
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      number.textContent = Math.round(progress * target);
+      if (progress < 1) window.requestAnimationFrame(count);
+    };
+
+    window.requestAnimationFrame(count);
+    observer.unobserve(number);
+  });
+}, { threshold: 0.7 });
+
+statNumbers.forEach((number) => statObserver.observe(number));
+
 const stars = document.querySelectorAll('.star');
 const ratingValue = document.querySelector('#rating-value');
 const ratingLabel = document.querySelector('#rating-label');
